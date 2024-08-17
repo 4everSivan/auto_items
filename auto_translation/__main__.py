@@ -1,28 +1,21 @@
 import sys
-
 import requests
 import logging
 import os
 
-from exception import TranslationException
-from tools.file_handler import get_file_handler, AbstractFileHandler
-from tools import check_file, make_save_file, save_data
+from .api import get_api, API
+from .exception import TranslationException
+from .tools.file_handler import get_file_handler, AbstractFileHandler
+from .tools import check_file, make_save_file, save_data
 
 
 logger = logging.getLogger()
-URL = {
-    'youdao': 'http://fanyi.youdao.com/translate',
-}
-
 
 def prepare_to_translation(sv_path, file_name: str) -> dict:
     return make_save_file(sv_path, file_name).get('path')
 
 
 def get_params(api_tec: str, text: str) -> dict:
-    if api_tec not in URL.keys():
-        error_msg = "{} is not support".format(api_tec)
-        return {'state': False, 'error_msg': error_msg}
 
     if api_tec == 'youdao':
         params = {
@@ -33,7 +26,7 @@ def get_params(api_tec: str, text: str) -> dict:
         }
     else:
         params = {}
-    return params
+    return {}
 
 
 def translate(t_url: str, api_tec: str, f_handler: AbstractFileHandler, data_lst: list) -> list:
@@ -62,14 +55,21 @@ def translate(t_url: str, api_tec: str, f_handler: AbstractFileHandler, data_lst
     return res
 
 
-if __name__ == '__main__':
-    try:
-        dir_path = os.path.dirname(__file__)
-        file_path = dir_path + '/sample/' + 'test.md'
-        save_path = dir_path + '/translation/'
-        api_name = 'youdao'
-        url = URL.get(api_name)
+def translation(args: dict) -> None:
+    api = get_api(args.get('api'))
 
+    # 查询接口状态
+    if args.get('check'):
+        if api.vip:
+            pass
+        api.check()
+        sys.exit(0)
+
+    file_path = args.get('input')
+    save_path = args.get('output')
+    api.set_language(args.get('language'))
+    
+    try:
         # check file
         check_file(file_path)
 
@@ -79,15 +79,11 @@ if __name__ == '__main__':
 
         # prepare to translation
         save_path_file = prepare_to_translation(save_path, file_handler.file_name)
-        for line in data_list:
-            file_handler.cut_line(line)
-            print(line)
 
-        sys.exit()
-
-        new_data_lst = translate(url, api_name, file_handler, data_list)
+        new_data_lst = translate(api.url(), api.name, file_handler, data_list)
         print(new_data_lst)
         # save new data
+
         # save_data(save_path_file, new_data_lst)
     except TranslationException as e:
         logger.exception(e)

@@ -10,8 +10,7 @@ class Markdown(AbstractFileHandler):
         res = []
         with open(self.file_path, "r+", encoding='utf-8') as file:
             for line in file:
-                if line != '\n':
-                    res.append(line)
+                res.append(line)
 
         return res
 
