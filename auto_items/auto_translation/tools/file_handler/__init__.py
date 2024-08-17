@@ -5,7 +5,7 @@ import pkgutil
 import importlib
 import logging
 
-from auto_translation.exception import FileHandlerException
+from auto_items.auto_translation.exception import FileHandlerException
 
 logger = logging.getLogger()
 FILE_EXTENSION_DICT = {

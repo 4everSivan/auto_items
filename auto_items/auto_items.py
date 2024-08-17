@@ -1,11 +1,11 @@
 import argparse
 import sys
 
-from auto_translation.__main__ import translation, API
-from banner import BANNER
+from .auto_translation.__main__ import translation, API
+from .banner import BANNER
 
 
-if __name__ == '__main__':
+def main() -> None:
     parser = argparse.ArgumentParser(description="AUTO_ITEMS 自动化工具集")
     # 翻译
     subparsers = parser.add_subparsers(title='Command', dest='Command', help='已实现的功能')

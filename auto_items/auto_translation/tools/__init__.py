@@ -1,6 +1,6 @@
 import os
 
-from auto_translation.exception import ProcessingFileException
+from ..exception import ProcessingFileException
 
 
 def check_file(file_path: str) -> bool:
